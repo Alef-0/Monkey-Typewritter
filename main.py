@@ -1,4 +1,4 @@
-import monkey as mk
+import libs.monkey as mk
 
 def chat(system_prompt):
     model = mk.create_model()
@@ -8,8 +8,7 @@ def chat(system_prompt):
         response = chat.send_message(prompt, stream=True)
         # Print Response
         for chunk in response:
-            chunk.resolve()
-            print(chunk.parts[0].text, end='', flush=True)
+            print(chunk.text, end='', flush=True)
         print('')
     
 if __name__=='__main__':

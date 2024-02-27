@@ -1,10 +1,11 @@
 import libs.constants as cnsts
-from site_var import ModelType
 from langchain_google_genai import GoogleGenerativeAI
 from langchain_openai import OpenAI,ChatOpenAI
 
-def create_model(type : ModelType, api_key = cnsts.GEMINI_KEY):    
-    if (type == ModelType.Gemini): 
+
+
+def create_model(type, api_key = cnsts.GEMINI_KEY):    
+    if (type == "Gemini"): 
         model = GoogleGenerativeAI(
             model=cnsts.GEMINI,
             max_output_tokens=8192,

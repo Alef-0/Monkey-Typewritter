@@ -24,7 +24,7 @@ def validate(new_key : str, choice : str, chatbot : list[list[str,str]]):
     sys.create_new_chat(choice)
     
     if sys.chat != None: 
-        sys.create_prompt()
+        # sys.create_prompt()
         return (gr.Button(visible=False), 
             gr.Chatbot(layout="bubble", value=[], show_label=False, show_copy_button=True, scale=3, height=400), 
             gr.Accordion(visible=False), gr.Row(visible=True))

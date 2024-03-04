@@ -34,7 +34,8 @@ class ParamsStory:
             partial_variables={'format_instructions': self.parser.get_format_instructions()},
         )
 
-        self.chain = ({"genre": itemgetter("genre") | RunnableLambda(length_function), "input": itemgetter("input") | RunnableLambda(length_function)} | self.prompt | sys.chat | StrOutputParser())
+    def buildChain(self):
+        self.chain = self.prompt | sys.chat | StrOutputParser()
 
 ps = ParamsStory()
 
@@ -42,6 +43,7 @@ def generate(input=str, genre=str, title=str, location=str, tone=str, pacing=str
     print(input, genre)
     if sys.chat == None: return "KEY INVALIDA", '', ''
     else:
+        ps.buildChain()
         resposta = ps.chain.invoke({"input": input,"genre": genre})
         dicionario : Prompt_Master = ps.parser.parse(resposta)
         return dicionario.history, dicionario.sheets, dicionario.timeline

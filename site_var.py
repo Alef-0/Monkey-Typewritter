@@ -28,8 +28,7 @@ class Variables:
             input_variables=['input'],
             partial_variables={'format_instructions': self.parser.get_format_instructions()},
         )
-
-        print(self.parser.get_format_instructions())
+        # print(self.parser.get_format_instructions())
     
     def create_prompt(self):
         if self.chat != None:

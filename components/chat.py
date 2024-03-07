@@ -2,6 +2,7 @@ import gradio as gr
 import libs.monkey as mk
 from time import sleep
 from site_var import sys
+import libs.constants as cnts
 
 # Definindo funções
 def talk(message : str, history : list[list[str,str]]):
@@ -31,6 +32,10 @@ def validate(new_key : str, choice : str, chatbot : list[list[str,str]]):
     else: 
         return (gr.Button(value="Invalid Key"), chatbot, gr.Accordion(label="Gemini Key", open=True), gr.Row(visible=False))
 
+def see_if_key(choice, chatbot):
+    print("Entrou aqui")
+    if cnts.GEMINI_KEY != None: return validate(cnts.GEMINI_KEY, choice, chatbot)
+
 # Definindo Layout
 with gr.Blocks() as chat_main:
     chatbot = gr.Chatbot(layout="panel", show_label=False, value=[
@@ -57,3 +62,4 @@ with gr.Blocks() as chat_main:
     speed.change(fn = sys.change_speed, inputs=[speed])
     
     test.click(fn = validate, inputs = [key, choice, chatbot], outputs = [test, chatbot, tray_place, chat_place], show_progress=True)
+    chat_main.load(see_if_key, inputs=[choice, chatbot], outputs = [test, chatbot, tray_place, chat_place])

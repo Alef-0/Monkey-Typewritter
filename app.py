@@ -9,5 +9,5 @@ from components.params import window_params_story
 
 
 # Lançando o site
-demo = gr.TabbedInterface([chat_main, windows_stories, window_params_story], ["Chat", "Create", "Params"])
+demo = gr.TabbedInterface([window_params_story, chat_main, windows_stories], ["Params", "Chat", "Create"])
 demo.launch()

@@ -32,7 +32,7 @@ class ParamsStory:
             input_variables=['input', 'genre', 'title'],
             partial_variables={'format_instructions': self.parser.get_format_instructions()},
         )
-        print(self.parser.get_format_instructions())
+        # print(self.parser.get_format_instructions())
 
     def buildChain(self):
         self.chain = self.prompt | sys.chat | StrOutputParser()
@@ -47,22 +47,23 @@ def generate(input=str, genre=str, title=str):
         resposta = ps.chain.invoke({"input": input,"genre": genre, "title": title})
         dicionario : Prompt_Master = ps.parser.parse(resposta)
         return dicionario.history, dicionario.sheets, dicionario.timeline
-    
-with gr.Blocks() as window_params_story:
-    gr.Markdown("""### Digite os detalhes da sua história que ele irá cria-la, e separar os detalhes da timeline e dos personagens. No futuro também adicionaremos fazer isso com texto, e maneira incremental de fazer os prompts.""")
-    with gr.Row() as params:
-        genre = gr.Textbox(label="Gênero")
-        title = gr.Textbox(label="Título")
 
-    details = gr.Textbox(label="Detalhes gerais", lines=5)
-    btn = gr.Button("Gerar")
-    
-    gr.Markdown("# Resultado")
-    historia = gr.Textbox(label="Narrativa", placeholder="Esperando o prompt", lines=5, interactive=False, autoscroll=True)
-    with gr.Row() as saidas:
-        personagens = gr.JSON(label="Personagens")
-        timeline = gr.JSON(label="Timeline")
+def params():
+    with gr.Blocks() as window_params_story:
+        gr.Markdown("""### Digite os detalhes da sua história que ele irá cria-la, e separar os detalhes da timeline e dos personagens. No futuro também adicionaremos fazer isso com texto, e maneira incremental de fazer os prompts.""")
+        with gr.Row() as params:
+            genre = gr.Textbox(label="Gênero")
+            title = gr.Textbox(label="Título")
 
-    btn.click(fn=generate, inputs=[details, genre, title], outputs=[historia, personagens, timeline], scroll_to_output=True)
-    details.submit(fn=generate, inputs=[details, genre, title], outputs=[historia, personagens, timeline], scroll_to_output=True)
-    
+        details = gr.Textbox(label="Detalhes gerais", lines=5)
+        btn = gr.Button("Gerar")
+        
+        gr.Markdown("# Resultado")
+        historia = gr.Textbox(label="Narrativa", placeholder="Esperando o prompt", lines=5, interactive=False, autoscroll=True)
+        with gr.Row() as saidas:
+            personagens = gr.JSON(label="Personagens")
+            timeline = gr.JSON(label="Timeline")
+
+        btn.click(fn=generate, inputs=[details, genre, title], outputs=[historia, personagens, timeline], scroll_to_output=True)
+        details.submit(fn=generate, inputs=[details, genre, title], outputs=[historia, personagens, timeline], scroll_to_output=True)
+    return window_params_story

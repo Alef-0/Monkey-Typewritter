@@ -1,6 +1,9 @@
 import libs.monkey as mk
 from enum import Enum
 import libs.prompts_templates as pt
+from langchain_google_genai import GoogleGenerativeAI
+from langchain_openai import OpenAI,ChatOpenAI
+import libs.constants as cnsts
 
 from langchain.output_parsers import PydanticOutputParser
 from langchain.prompts import PromptTemplate
@@ -13,7 +16,6 @@ class Prompt_Master(BaseModel):
     timeline : list[str] = Field(description=pt.PARSER_TIMELINE)
     sheets : list[list[str]] = Field(description= pt.PARSER_SHEETS)
 
-
 # System Variables
 class Variables:
     def __init__(self):
@@ -22,7 +24,6 @@ class Variables:
         self.key = ""
 
         self.parser = PydanticOutputParser(pydantic_object=Prompt_Master)
-
         self.prompt = PromptTemplate(
             template = pt.PROMPT_TEMPLATE + "\n{format_instructions}\n{input}\n",
             input_variables=['input'],
@@ -33,14 +34,30 @@ class Variables:
     def create_prompt(self):
         if self.chat != None:
             self.chain = ({'input': RunnablePassthrough()} | self.prompt | self.chat | StrOutputParser())
-
     def change_speed(self, s):
         self.speed_up = s; print("Speed changed")
     def change_key(self, k):
         self.key = k; print("Key changed")
 
     # Principais
-    def create_new_chat(self, model):
-        self.chat = mk.create_model(model, self.key)
+    def create_new_chat(self, type):
+        print("Tentando criar chat")
+        if (type == "Gemini"): 
+            model = GoogleGenerativeAI(
+                model=cnsts.GEMINI,
+                max_output_tokens=8192,
+                google_api_key = self.key,
+                safety_settings = cnsts.SAFETY_GEMINI,
+                convert_system_message_to_human=True
+            ); 
+            print("Trying Gemini")
+        else: 
+            model = ChatOpenAI(api_key = self.key); print("Trying GPT")
+        
+        try: 
+            response  = model.invoke("Are you connected? Yes or no. Short answer")
+            print(response.strip())
+            self.chat = model
+        except: print("Key Error")
 
 sys = Variables()

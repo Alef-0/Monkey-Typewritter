@@ -1,4 +1,4 @@
-import libs.constants as cnsts
+import constants as cnsts
 from langchain_google_genai import GoogleGenerativeAI
 from langchain_openai import OpenAI,ChatOpenAI
 

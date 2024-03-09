@@ -1,12 +1,11 @@
 import gradio as gr
-import libs.monkey as mk
+import libs.Old_monkey as mk
 from time import sleep
-from site_var import sys
-import libs.constants as cnst
+from monkey import sys
+import constants as cnst
 
 from components.chat import chat
-from components.stories import stories
-from components.params import params
+from components.create import create
 
 # demo = gr.TabbedInterface([params(), chat(), stories()], ["Params", "Chat", "Create"])
 
@@ -23,9 +22,11 @@ def automatic():
         
 with gr.Blocks() as demo:
     with gr.Tabs(visible=False) as main_tabs:
-        with gr.Tab("Params", id=0):  params()
-        with gr.Tab("Chat", id=1):    chat()
-        with gr.Tab("Create", id=2):  stories()
+        with gr.Tab("Create",id=1):     create()
+        with gr.Tab("Chat", id=99):      chat()
+        # Talvez não utilize mais essas
+        # with gr.Tab("Teste", id=2):  params()
+        # with gr.Tab("Create", id=3):  stories()
     
     with gr.Tabs() as key_tab:
         with gr.Tab("KEY", id = 99):

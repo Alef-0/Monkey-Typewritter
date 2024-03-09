@@ -1,8 +1,8 @@
 import gradio as gr
-import libs.monkey as mk
+import libs.Old_monkey as mk
 from time import sleep
-from site_var import sys
-import libs.constants as cnts
+from monkey import sys
+import constants as cnts
 
 # Definindo funções
 def talk(message : str, history : list[list[str,str]]):

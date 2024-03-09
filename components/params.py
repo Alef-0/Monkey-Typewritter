@@ -1,5 +1,5 @@
 import gradio as gr
-from site_var import sys
+from monkey import sys
 import libs.prompts_templates as pt
 
 from langchain.output_parsers import PydanticOutputParser

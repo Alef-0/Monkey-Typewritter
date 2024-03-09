@@ -23,7 +23,6 @@ def criar(prompt : str):
     stream = chain.stream({'input': prompt})
     historia = ""
     for parts in stream:
-        historia += parts
         for char in parts:
             historia += char
             sleep(0.001)

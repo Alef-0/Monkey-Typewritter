@@ -1,42 +1,47 @@
 import gradio as gr
-import constants as cnsts
-from langchain.output_parsers import PydanticOutputParser
+
 import models.narrator as nar
 import models.director as dir
 import models.editor as edi
+
 import models.user_save as usr
 from time import sleep
 
 
-def redo(historia):
-    yield {"STILL MAKING IT"}, {"STILL MAKING IT"}, gr.File(visible=False)
-    personagens : dir.Sheets_Json = dir.chain.call_chain(historia)
-    yield personagens.dict(), {"STILL MAKING IT"}, gr.File(visible=False)
-    timeline : edi.Timeline_json = edi.chain.call_chain(historia)
-    
+def redo(historia):    
+    while True:
+        try: personagens : dir.Sheets_Json = dir.call_director(historia); break
+        except: print("Falhou a criação de personagens")
+    yield personagens.dict(), {"STILL MAKING IT"}, gr.File(visible=False),
+    while True:
+        try: timeline : edi.Timeline_json = edi.call_editor(historia);break
+        except: print("Falhou a criação de timeline")
     res_path = usr.create_json(historia, personagens.dict(), timeline.dict())
-    yield personagens.dict(), timeline.dict(), gr.File(label = "Saida como arquivo", visible=True, value = res_path, show_label=True)
+    yield (
+        personagens.dict(), timeline.dict(), 
+        gr.File(label = "Arquivo atual",visible=True, value= [res_path], show_label=True),
+    )
 
 def criar(prompt : str):        
     # Criar saida  da historia
-    chain = nar.create_chain()
-    stream = chain.stream({'input': prompt})
+    stream = nar.call_narrator(prompt, True)
     historia = ""
     for parts in stream:
         for char in parts:
-            historia += char
-            sleep(0.001)
+            historia += char.text
+            sleep(0.05)
             yield historia, {"STILL MAKING IT"}, {"STILL MAKING IT"}, gr.File(visible=False)
-    
+
     while True:
-        try: personagens : dir.Sheets_Json = dir.call_chain(historia); break
+        try: personagens : dir.Sheets_Json = dir.call_director(historia); break
         except: print("Falhou a criação de personagens")
     yield historia, personagens.dict(), {"STILL MAKING IT"}, gr.File(visible=False),
-    while True:
-        try: timeline : edi.Timeline_json = edi.call_chain(historia);break
-        except: print("Falhou a criação de timeline")
-    res_path = usr.create_json(historia, personagens.dict(), timeline.dict())
     
+    while True:
+        try: timeline : edi.Timeline_json = edi.call_editor(historia);break
+        except: print("Falhou a criação de timeline")
+    
+    res_path = usr.create_json(historia, personagens.dict(), timeline.dict())
     yield (
         historia, personagens.dict(), timeline.dict(), 
         gr.File(label = "Arquivo atual",visible=True, value= [res_path], show_label=True),

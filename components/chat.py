@@ -1,57 +1,40 @@
 import gradio as gr
-import libs.Old_monkey as mk
 from time import sleep
 from monkey import sys
 import constants as cnts
 
 # Definindo funções
 def talk(message : str, history : list[list[str,str]]):
-    response = sys.chat.stream(message)
+    response = sys.chat.send_message(message, stream=True)
     history.append([message, ""])
     for chunk in response:
-        if sys.speed_up:
-            history[-1][1] += chunk
+        for i in chunk.text:
+            sleep(0.05)
+            history[-1][1] += i
             yield history
-        else:
-            for i in range(len(chunk)):
-                sleep(0.005)
-                history[-1][1] += chunk[i]
-                yield history
     yield history
 
-def validate(new_key : str, choice : str, chatbot : list[list[str,str]]):
-    new_key = new_key.strip()
-    print("Choice = ", choice)
-    sys.change_key(new_key)
-    sys.create_new_chat(choice)
-    
-    if sys.chat != None: 
-        # sys.create_prompt()
-        return (gr.Button(visible=False), 
-            gr.Chatbot(layout="bubble", value=[], show_label=False, show_copy_button=True, scale=3, height=400), 
-            gr.Accordion(visible=False), gr.Row(visible=True))
-    else: 
-        return (gr.Button(value="Invalid Key"), chatbot, gr.Accordion(label="Gemini Key", open=True), gr.Row(visible=False))
-
-def see_if_key(choice, chatbot):
-    print("Entrou aqui")
-    if cnts.GEMINI_KEY != None: return validate(cnts.GEMINI_KEY, choice, chatbot)
+def clear_history(history : list[list[str,str]]):
+    history = []
+    sys.chat.history = []
+    return history
 
 # Definindo Layout
 def chat():
     with gr.Blocks() as chat_main:
         chatbot = gr.Chatbot(layout="bubble", value=[], show_label=False, show_copy_button=True, scale=3, height=400) 
         with gr.Row() as chat_place:
-            question = gr.Textbox(placeholder="What are you asking? [Press Shift + Enter to send]", lines=4, show_label=False, scale=3)
-            with gr.Column():
-                gr.Markdown("## [O modelo não possui memória]",)
-                speed = gr.Checkbox(label="Speed Up", info="This will make the chat stop slowly printing", scale=4)
-        
+            question = gr.Textbox(placeholder="What are you asking? [Press Shift + Enter to send]", lines=6, show_label=False, scale=3)
+            with gr.Column(scale=2):
+                gr.Markdown("## [O modelo possui memória limitada]")
+                send = gr.Button("Send Question")
+                restart = gr.Button("Restart Conversation")
         # Eventos
-        # @clear.click(outputs=[question, chatbot]) #Essa é uma forma direta
-        # @choice.change(inputs=[choice])
         question.submit(talk, [question, chatbot], [chatbot])
-        question.submit(lambda _: "", [question], [question])
-        speed.change(fn = sys.change_speed, inputs=[speed])
+        question.submit(lambda _: "",inputs=[question], outputs=[question]) # Limpar questão
+        send.click(lambda _: "", inputs=[question], outputs=[question])
+        send.click(talk, [question, chatbot], [chatbot])
+
+        restart.click(clear_history, [chatbot], [chatbot])
         
     return chat_main

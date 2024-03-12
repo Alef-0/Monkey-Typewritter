@@ -1,12 +1,6 @@
-from langchain_google_genai import GoogleGenerativeAI
-from langchain_openai import OpenAI,ChatOpenAI
-import constants as cnsts
-
 from langchain.output_parsers import PydanticOutputParser
 from langchain.prompts import PromptTemplate
 from langchain.pydantic_v1 import BaseModel, Field, validator
-from langchain_core.runnables import RunnablePassthrough
-from langchain_core.output_parsers import StrOutputParser
 from monkey import sys
 
 appearance_description ="""
@@ -34,20 +28,19 @@ class Sheets_Json(BaseModel):
     characters : list[Character_Sheet] = Field(description="A list of characters with their name and descriptions")
 
 base_prompt = """
-You are going to read the passage of a text and summarize the characters of that story, their personality and appearances.
+You are going to read the a text and summarize the characters of that story, their personality and appearances.
 It's necessary for good results to keep them as concise as possible, with only one phrase per trait at the limit.
-Answer using the following formating rules, everything inside an object:
+Answer using the following formating rules:
 """.strip()
 
 parser = PydanticOutputParser(pydantic_object=Sheets_Json)
 
 prompt = PromptTemplate(
-    template="{base_prompt}"+"\n{format_instructions}\n{query}\n",
+    template="{base_prompt}"+"\n{format_instructions}\nHere's the Text:\n{query}\n",
     input_variables=["query"],
     partial_variables={"format_instructions": parser.get_format_instructions(), "base_prompt" : base_prompt},
 )
 
-def call_chain(entrada):
-    global prompt, parser
-    chain = prompt | sys.chat | parser
-    return chain.invoke({'query': entrada})
+def call_director(entrada : str):
+    response = sys.model.generate_content(prompt.format(query=entrada))
+    return parser.parse(response.text)

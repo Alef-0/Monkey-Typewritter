@@ -1,16 +1,13 @@
-from langchain_google_genai import GoogleGenerativeAI
-from langchain_openai import OpenAI,ChatOpenAI
+import google.generativeai as genai
 import constants as cnsts
 
-model_g = GoogleGenerativeAI(
-                model=cnsts.GEMINI,
-                max_output_tokens=8192,
-                google_api_key = cnsts.GEMINI_KEY,
+
+genai.configure(api_key=cnsts.GEMINI_KEY)
+model_g = genai.GenerativeModel(
+                model_name=cnsts.GEMINI,
                 safety_settings = cnsts.SAFETY_GEMINI,
-                convert_system_message_to_human=True
+                generation_config=cnsts.GENERATION_GEMINI
             ); 
 
-model = ChatOpenAI(api_key = cnsts.GPT_KEY)
-
-response = model_g.invoke("Hello")
-print(response)
+response = model_g.generate_content("Hello")
+print(response.text)

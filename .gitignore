@@ -1,4 +1,4 @@
 /.env
 *__pycache__
-jsons/
+*.json
 chapter01.json

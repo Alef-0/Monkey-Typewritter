@@ -15,7 +15,7 @@ SAFETY_GEMINI = {
 GENERATION_GEMINI = {
   "temperature": 0.9,
   # Maximum possible, probably overshooting. 2048 - 8192
-  "max_output_tokens": 2048, 
+  "max_output_tokens": 8192, 
 }
 
 GEMINI = "gemini-1.0-pro-latest"

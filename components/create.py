@@ -54,7 +54,7 @@ def criar(prompt : str):
     res_path = usr.create_json(historia, personagens.dict(), timeline.dict())
     yield (
         historia, personagens.dict(), timeline.dict(), 
-        gr.File(label = "Arquivo atual",visible=True, value= [res_path], show_label=True),
+        gr.File(label = "Download seu capítulo",visible=True, value= [res_path], show_label=True),
     )
 
 def upar(local : str):

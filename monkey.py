@@ -24,6 +24,11 @@ class Variables:
             generation_config=cnst.GENERATION_GEMINI,
             safety_settings=cnst.SAFETY_GEMINI
         )
+        self.vision = genai.GenerativeModel(
+            model_name=cnst.GEMINI_VISION,
+            generation_config=cnst.GENERATION_GEMINI,
+            safety_settings=cnst.SAFETY_GEMINI
+        )
         try:
             response = self.model.generate_content("Are you connected? Give me a simple yes or no.")
             print(response.text)

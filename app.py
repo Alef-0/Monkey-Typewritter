@@ -1,24 +1,25 @@
 import gradio as gr
 from monkey import sys
 import constants as cnst
-from gradio.themes.utils import sizes
+from gradio.themes.utils import sizes, colors
 
 from components.chat import chat
 from components.create import create
 from components.edit import edit
+from components.art import art
 
-QUANTITY = 3
+QUANTITY = 4
 
 def creating_chat(key):
         if sys.create(key):
-            return [gr.Button("Chave Válida,")] + [gr.Tabs(visible=True)] * QUANTITY + [gr.Textbox(value="", visible=False)]
+            return [gr.Button("Chave Válida")] + [gr.Tabs(visible=True)] * QUANTITY + [gr.Textbox(value="", visible=False)]
         else: return [gr.Button("Tente novamente")] + [gr.Tab(visible=False)] * QUANTITY + [gr.Textbox(value="", visible=False)]
 
 def automatic():
     if (cnst.GEMINI_KEY): print("Env detected"); return creating_chat(cnst.GEMINI_KEY)
     else: return [gr.Button("Validar chave")] + [gr.Tab(visible=False)] * QUANTITY
         
-with gr.Blocks(theme=gr.themes.Monochrome(text_size=sizes.text_lg), title="Monkey Typewritter") as demo:
+with gr.Blocks(theme=gr.themes.Soft(text_size=sizes.text_lg), title="Monkey Typewritter") as demo:
     with gr.Tabs() as main_tabs:
         with gr.Tab("Boas Vindas", id=1) as key_tab:
             gr.Markdown("# Coloque uma chave válida para continuar, pegue sua na [Google AI Studio](https://aistudio.google.com/app/apikey)")
@@ -50,6 +51,7 @@ O MonkeyTypewriter irá gerar uma **narrativa mais elaborada**, incluindo:
 
 **Recursos Adicionais:**
 
+-   **Descritor Artistico:** Envie uma image, e crie a primeira cena da sua história baseada nela.
 -   **Assistente de Chat:**  Converse com o Monkey e receba dicas e sugestões para aprimorar sua escrita. Torne-se um Shakespeare com a ajuda da IA!
 
 **Dicas para Começar:**
@@ -61,9 +63,10 @@ O MonkeyTypewriter irá gerar uma **narrativa mais elaborada**, incluindo:
 """)
         with gr.Tab("Criar História",id=2, visible=False) as h_tab:    create()
         with gr.Tab("Editar História", id=3, visible=False) as e_tab:     edit()
+        with gr.Tab("Descrição de imagem", id=4, visible=False) as a_tab: art()
         with gr.Tab("Assistente", id=99, visible=False) as c_tab:    chat()
     
-    all_tabs = [h_tab, e_tab, c_tab]
+    all_tabs = [h_tab, e_tab, a_tab, c_tab]
 
     test.click(creating_chat, inputs=[key], outputs=[test, *all_tabs, key], show_progress=True)
     demo.load(automatic, outputs=[test, *all_tabs, key], show_progress=True)

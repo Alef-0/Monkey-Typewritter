@@ -120,7 +120,7 @@ def delete_things(num, name, tag):
 def create_download_file():
     global atual
     res_path = save_from_editor(atual)
-    return gr.File(label = "Arquivo atual", visible=True, value= [res_path], show_label=True)
+    return gr.File(label = "Download seu capítulo", visible=True, value= [res_path], show_label=True)
 
 def edit():
     with gr.Blocks() as edit_main:

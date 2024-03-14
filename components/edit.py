@@ -156,7 +156,8 @@ def edit():
             see_json = gr.Button("Clique para ver como ficará o output")
             donwload_json = gr.Button("Create the download")
         files_downloads = gr.File(visible=False)
-        see = gr.JSON({"ATUALIZE PARA VER"})
+        with gr.Accordion(visible=True, label="Json de Saida", open=True):
+            see = gr.JSON({"ATUALIZE PARA VER"})
         see_json.click(lambda: atual, [],[see])
         donwload_json.click(create_download_file, outputs=files_downloads)
         

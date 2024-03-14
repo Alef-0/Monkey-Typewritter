@@ -14,11 +14,14 @@ SAFETY_GEMINI = {
 
 GENERATION_GEMINI = {
   "temperature": 0.9,
-  # Maximum possible, probably overshooting. 2048 - 8192
-  "max_output_tokens": 8192, 
+  "candidate_count": 1
 }
 
 GEMINI = "gemini-1.0-pro-latest"
 GEMINI_VISION = "gemini-1.0-pro-vision-latest"
 
 #Precisa de um arquivo .env
+AVISO = """
+Infelizmente o gemini tem problema com GRPC e como a história é grande pode estourar a quantidade de streams. 
+Por isso faremos tudo de uma vez antes de exibir.
+""".strip()
